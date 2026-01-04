@@ -79,6 +79,10 @@ docker volume inspect myvolume          # Volume details
 
 # Mount volume
 docker run -v myvolume:/data ubuntu   # Mount when running
+
+# Backup and restore volumes
+docker run --rm -v source:/data -v backup:/backup alpine tar -czf /backup/data.tar.gz -C /data
+docker run --rm -v target:/data -v backup:/backup alpine tar -xzf /backup/data.tar.gz -C /data
 ```
 
 ### Network Management
