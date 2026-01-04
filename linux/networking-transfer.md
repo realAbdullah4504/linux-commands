@@ -61,6 +61,19 @@ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
 ssh-copy-id -i ~/.ssh/key.pem user@hostname
 ```
 
+#### Manage Known Hosts
+
+```bash
+# Remove specific host from known_hosts
+ssh-keygen -f "/home/abdullah/.ssh/known_hosts" -R "72.60.7.166"
+
+# Remove host key for any IP
+ssh-keygen -f ~/.ssh/known_hosts -R hostname
+
+# Remove all host keys
+ssh-keygen -f ~/.ssh/known_hosts -R
+```
+
 ## SCP File Transfer
 
 ### Copy File from Remote to Local
