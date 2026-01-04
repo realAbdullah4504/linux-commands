@@ -74,3 +74,26 @@ docker inspect <container_name_or_id>
 # Check specific mount points
 docker inspect <container-name> --format '{{ range .Mounts }}{{ .Name }}:{{ .Destination }} {{ end }}'
 ```
+
+## Backup Operations with Volumes
+
+### Backup Volume to Another Volume
+```bash
+# Extract backup from one volume to another
+docker run --rm -v acunetix-data:/data -v /root:/backup alpine sh -c "tar -xzvf /backup/acunetix-backup-2025-12-07.tar.gz -C /data"
+
+# Backup with different compression
+docker run --rm -v source-volume:/source -v backup-volume:/backup alpine tar -czf /backup/backup-$(date +%Y-%m-%d).tar.gz -C /source .
+
+# Copy data between volumes
+docker run --rm -v source-volume:/source -v dest-volume:/dest alpine cp -r /source/* /dest/
+```
+
+### Restore from Backup
+```bash
+# Restore backup to volume
+docker run --rm -v acunetix-data:/data -v /root:/backup alpine sh -c "tar -xzvf /backup/acunetix-backup-2025-12-07.tar.gz -C /data"
+
+# Extract specific files
+docker run --rm -v app-data:/data -v /backup:/backup alpine tar -xzf /backup/backup.tar.gz -C /data specific-file/
+```
