@@ -348,6 +348,102 @@ PasswordAuthentication no
 PubkeyAuthentication yes
 ```
 
+### SSL/TLS Certificates with Certbot
+
+#### Install Certbot
+```bash
+# Ubuntu/Debian
+sudo apt update
+sudo apt install -y certbot python3-certbot-nginx
+
+# CentOS/RHEL
+sudo yum install -y certbot python3-certbot-nginx
+
+# For Apache instead of Nginx
+sudo apt install -y certbot python3-certbot-apache
+```
+
+#### Generate SSL Certificate
+```bash
+# For Nginx
+sudo certbot --nginx -d yourdomain.com
+
+# For Apache
+sudo certbot --apache -d yourdomain.com
+
+# For standalone (temporary web server)
+sudo certbot certonly --standalone -d yourdomain.com
+
+# For DNS challenge
+sudo certbot certonly --dns-cloudflare --dns-cloudflare-credentials ~/.secrets/certbot/cloudflare.ini -d yourdomain.com
+```
+
+#### Certificate Management
+```bash
+# List certificates
+sudo certbot certificates
+
+# Renew certificates
+sudo certbot renew
+
+# Renew with dry run (test)
+sudo certbot renew --dry-run
+
+# Revoke certificate
+sudo certbot revoke --cert-path /etc/letsencrypt/live/yourdomain.com/fullchain.pem
+
+# Delete certificate
+sudo certbot delete --cert-name yourdomain.com
+```
+
+#### Auto-Renewal Setup
+```bash
+# Test auto-renewal
+sudo certbot renew --dry-run
+
+# Set up auto-renewal cron job
+echo "0 12 * * * /usr/bin/certbot renew --quiet" | sudo crontab -
+
+# Check renewal timer (systemd)
+systemctl list-timers | grep certbot
+```
+
+#### Certificate Paths
+```bash
+# Certificate files location
+/etc/letsencrypt/live/yourdomain.com/
+├── cert.pem       # SSL certificate
+├── chain.pem      # Certificate chain
+├── fullchain.pem  # Full certificate chain
+└── privkey.pem    # Private key
+
+# Nginx configuration snippet
+ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
+
+# Apache configuration snippet
+SSLCertificateFile /etc/letsencrypt/live/yourdomain.com/fullchain.pem
+SSLCertificateKeyFile /etc/letsencrypt/live/yourdomain.com/privkey.pem;
+```
+
+#### Troubleshooting
+```bash
+# Check certificate status
+sudo certbot certificates
+
+# Test renewal
+sudo certbot renew --dry-run
+
+# Check Nginx SSL configuration
+sudo nginx -t
+
+# Check Apache SSL configuration
+sudo apache2ctl configtest
+
+# View logs
+sudo journalctl -u certbot -f
+```
+
 ### Check for Failed Login Attempts
 
 ```bash
